@@ -1,0 +1,100 @@
+---
+title: API Overview
+description: The Resonance backend API provides AI-powered consciousness features via a simple HTTP interface. All endpoints are served by an Express server using Perplexity's sonar model.
+---
+
+## Base URL
+
+All API requests are sent to:
+
+```
+http://localhost:3001/api
+```
+
+You can override this by setting the `VITE_API_URL` environment variable in your frontend `.env` file.
+
+## Authentication
+
+You do not need to send any credentials from the client. The `PERPLEXITY_API_KEY` is stored exclusively on the server and is never exposed to the browser. Simply make requests to the backend and it handles all AI authentication for you.
+
+<Note>
+If the server starts without a `PERPLEXITY_API_KEY`, AI endpoints return `503 Service Unavailable`. The health endpoint (`GET /api/health`) still responds normally so you can detect this condition.
+</Note>
+
+## AI model
+
+All AI features use Perplexity's **`sonar`** model accessed via an OpenAI-compatible SDK pointed at `https://api.perplexity.ai`. The server instructs the model to return only valid JSON — no markdown, no prose.
+
+## Rate limiting
+
+The API enforces a limit of **30 requests per minute per IP address**. When you exceed this limit the server responds with:
+
+```
+HTTP 429 Too Many Requests
+```
+
+```json
+{ "error": "Rate limit exceeded. Please slow down and take a breath. 🌬️" }
+```
+
+The window resets on a rolling one-minute basis.
+
+## Response format
+
+Every successful response follows the same envelope:
+
+```json
+{ "success": true, "data": "<payload>" }
+```
+
+Errors return a plain object without the `success` wrapper:
+
+```json
+{ "error": "Human-readable message", "details": "Optional technical detail" }
+```
+
+Occasionally, if the AI returns text that cannot be parsed as JSON, the response includes a `warning` field:
+
+```json
+{
+  "success": true,
+  "data": { "rawResponse": "..." },
+  "warning": "Response was not valid JSON"
+}
+```
+
+## Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/api/health` | Health check — verifies the server and AI are running |
+| `POST` | `/api/consciousness/map` | Analyze a journal entry and return a consciousness map |
+| `POST` | `/api/synchronicity` | Generate serendipitous resources and practices for an interest |
+| `POST` | `/api/wisdom` | Draw ancient wisdom teachings for a current situation |
+| `POST` | `/api/shadow` | Shadow integration guide for patterns and blind spots |
+| `POST` | `/api/feed` | Generate a consciousness-awareness news feed |
+| `POST` | `/api/intention` | Generate a daily intention with morning, midday, and evening practices |
+| `POST` | `/api/generate` | Generic endpoint for custom AI prompts |
+
+## Explore endpoints
+
+<CardGroup cols={2}>
+  <Card title="Consciousness" icon="brain" href="/api/consciousness">
+    Map journal entries to emotional frequencies, growth edges, and next steps.
+  </Card>
+  <Card title="Synchronicity" icon="sparkles" href="/api/synchronicity">
+    Discover resources, practices, and connections aligned with your current interests.
+  </Card>
+  <Card title="Wisdom" icon="book-open" href="/api/wisdom">
+    Access ancient teachings from Buddhist, Stoic, Taoist, and other traditions.
+  </Card>
+  <Card title="Shadow" icon="moon" href="/api/shadow">
+    Gently explore unconscious patterns and integrate your shadow with compassion.
+  </Card>
+  <Card title="Feed" icon="rss" href="/api/feed">
+    Load a curated consciousness-awareness feed across six categories.
+  </Card>
+  <Card title="Intention" icon="sun" href="/api/intention">
+    Generate a daily intention with practices for morning, midday, and evening.
+  </Card>
+</CardGroup>

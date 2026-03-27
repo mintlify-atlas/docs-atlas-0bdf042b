@@ -1,0 +1,142 @@
+---
+title: Deployment
+description: Deploy Resonance to production on Vercel or another hosting provider.
+---
+
+Resonance is a React + Express application. For production you need to deploy two things: the React frontend (a static build) and the Express backend (a Node.js server). This guide walks through both.
+
+## Deployment options
+
+<CardGroup cols={2}>
+
+<Card title="Vercel" icon="triangle">
+  Deploy the frontend as a static site and the backend as a serverless function. The project already includes `@vercel/functions` as a dependency.
+</Card>
+
+<Card title="Self-hosted (VPS / container)" icon="server">
+  Run the Express server directly on any Linux host, behind a reverse proxy such as nginx or Caddy. Full control over environment and scaling.
+</Card>
+
+</CardGroup>
+
+## Deploying to Vercel
+
+<Steps>
+
+### Import the repository
+
+1. Go to [vercel.com/new](https://vercel.com/new) and import the `neuralboy/reasonance-app` repository.
+2. Vercel auto-detects the Vite framework. Leave the build settings at their defaults:
+   - **Build command:** `npm run build`
+   - **Output directory:** `dist`
+
+### Set environment variables
+
+In the Vercel project dashboard, go to **Settings → Environment Variables** and add the following:
+
+| Variable | Required | Value |
+|---|---|---|
+| `PERPLEXITY_API_KEY` | Yes | Your Perplexity AI API key |
+| `VITE_API_URL` | Yes | The public URL of your deployed backend + `/api` |
+| `VITE_SUPABASE_URL` | If using Notes | Your Supabase project URL |
+| `VITE_SUPABASE_ANON_KEY` | If using Notes | Your Supabase anon key |
+| `NODE_ENV` | Recommended | `production` |
+
+<Warning>
+Do not set `PERPLEXITY_API_KEY` as a variable prefixed with `VITE_`. Vite-prefixed variables are embedded in the browser bundle at build time, which would expose your key publicly. Keep it server-side only.
+</Warning>
+
+### Deploy the backend
+
+The `@vercel/functions` package and the existing `src/lib/vercel.ts` integration file allow the Express routes to run as Vercel serverless functions. If you are deploying the backend separately (recommended for production traffic), deploy it to a service that supports persistent Node.js processes (Railway, Render, Fly.io, or a VPS) and note the public URL.
+
+Set `VITE_API_URL` in Vercel to point to that URL, for example:
+
+```env
+VITE_API_URL=https://api.yourdomain.com/api
+```
+
+### Trigger a deployment
+
+Push to your main branch or click **Redeploy** in the Vercel dashboard. Vercel builds the frontend with `npm run build` and deploys it to its CDN.
+
+</Steps>
+
+## Self-hosted deployment
+
+<Steps>
+
+### Build the frontend
+
+```bash
+npm run build
+```
+
+The output is written to `dist/`. Serve this directory with any static file server (nginx, Caddy, S3 + CloudFront, etc.).
+
+### Configure environment variables
+
+On your server, set environment variables in whatever way your host supports — a `.env` file, a systemd unit file, or your cloud provider's secret store.
+
+```env
+NODE_ENV=production
+PERPLEXITY_API_KEY=your_key_here
+PORT=3001
+```
+
+### Start the backend
+
+```bash
+node server.js
+```
+
+For a long-running process, use a process manager:
+
+```bash
+# With PM2
+pm2 start server.js --name resonance-backend
+pm2 save
+pm2 startup
+```
+
+### Reverse proxy with HTTPS
+
+Place the backend behind a reverse proxy that terminates TLS. A minimal nginx configuration:
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name api.yourdomain.com;
+
+    location /api/ {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+}
+```
+
+</Steps>
+
+## Notes and Supabase
+
+The Notes feature stores data in [Supabase](https://supabase.com). To enable it in production, set the following frontend (Vite-prefixed) environment variables wherever your frontend is built:
+
+```env
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+You find both values in your Supabase project under **Settings → API**. The anon key is safe to embed in the frontend bundle because Supabase Row Level Security (RLS) controls what each key can access. Enable RLS on your `notes` table before going to production.
+
+## Security considerations
+
+<Warning>
+Always serve both the frontend and backend over HTTPS in production. Never expose `PERPLEXITY_API_KEY` to the browser.
+</Warning>
+
+- **API key isolation.** `PERPLEXITY_API_KEY` is read only by the Node.js backend process. It is never included in the Vite build and never sent to the browser.
+- **Rate limiting.** The built-in rate limiter allows 30 requests per minute per IP. For public-facing deployments, consider adding a CDN-level rate limit (Vercel Edge Config, Cloudflare Rules) in front of the backend as well.
+- **`NODE_ENV=production`.** Setting this variable disables the `details` field on `500` error responses, preventing internal error messages from leaking to clients.
+- **CORS.** The backend currently enables CORS for all origins. In production, tighten this to your frontend domain by passing an `origin` option to the `cors()` middleware in `server.js`.
+- **Supabase RLS.** If you use the Notes feature, enable Row Level Security on your Supabase tables so that the public anon key cannot read or modify other users' data.

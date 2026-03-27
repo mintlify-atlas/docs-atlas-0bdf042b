@@ -1,0 +1,86 @@
+---
+title: Notes
+description: A persistent journal backed by Supabase — the only feature in Resonance that saves your data server-side.
+---
+
+Notes is Resonance's persistent storage feature. While everything else in the app lives in browser memory and disappears on refresh, Notes saves your entries to a Supabase database so they are available the next time you open the app.
+
+<Note>
+  Your notes are stored in a Supabase database associated with this Resonance deployment. Resonance does not read, analyze, sell, or share your note content. You own what you write. See [Privacy](/features/privacy) for the full data policy.
+</Note>
+
+## What Notes does
+
+Notes connects to your Supabase database and displays all saved entries in a read-only list. Entries are loaded automatically when you open the Notes view.
+
+<CardGroup cols={2}>
+  <Card title="Persistent storage" icon="database">
+    Notes are stored server-side in Supabase and survive browser refreshes and new sessions — unlike all other Resonance feature outputs, which live only in browser memory.
+  </Card>
+  <Card title="Chronological view" icon="book-open">
+    All entries are displayed in the order they were created, with the creation date shown beneath each entry's content.
+  </Card>
+</CardGroup>
+
+<Note>
+  The current Notes interface is read-only: it fetches and displays notes from your Supabase `notes` table. To add notes, insert rows directly into your Supabase database or via the Supabase dashboard. This is intentional for the current version — the feature is a viewer for notes you create elsewhere.
+</Note>
+
+## Connecting to Supabase
+
+Notes requires `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` to be set in your `.env.vite` file. Without these credentials the view shows the message: *"No notes yet. Connect to Supabase to start storing your reflections."*
+
+See [Environment Variables](/setup/environment) for setup instructions.
+
+## The `notes` table schema
+
+Notes reads from a Supabase table named `notes` with the following expected structure:
+
+| Column | Type | Description |
+|---|---|---|
+| `id` | `number` | Unique row identifier |
+| `content` | `string` | The note text content |
+| `created_at` | `string` | ISO timestamp of when the note was created |
+| `user_id` | `string` (optional) | Optional user identifier for multi-user setups |
+
+## Notes vs. in-session journal entries
+
+Some other Resonance features (such as Consciousness Mapping) produce reflections during a session. Those entries live only in browser memory and are gone when you refresh or close the tab. Notes are different:
+
+| | In-session entries | Notes |
+|---|---|---|
+| Storage | Browser memory | Supabase (server-side) |
+| Survives refresh | No | Yes |
+| Survives closing the tab | No | Yes |
+| Analyzed by Resonance | No | No |
+| Requires Supabase credentials | No | Yes |
+
+## Data and privacy
+
+Notes is the only feature that persists data outside your browser. A few things worth knowing:
+
+<AccordionGroup>
+  <Accordion title="Who can see my notes?">
+    Notes are stored in a Supabase database. Resonance does not read, analyze, or share the content of your notes. Database access is controlled by Supabase's row-level security. No Resonance team member routinely accesses note content.
+  </Accordion>
+  <Accordion title="How do I delete my data?">
+    Delete notes directly from your Supabase dashboard or via the Supabase API. Deletion removes the entry from the database immediately and permanently.
+  </Accordion>
+  <Accordion title="Is my note content sent to the AI?">
+    No. Notes are read directly from Supabase and are never sent to the Perplexity AI API. The AI has no access to your note content.
+  </Accordion>
+  <Accordion title="What happens if I clear my browser data?">
+    Because Notes are stored server-side in Supabase, clearing your browser cache or local storage has no effect on your notes. They persist until you explicitly delete them from Supabase.
+  </Accordion>
+</AccordionGroup>
+
+## Related features
+
+<CardGroup cols={2}>
+  <Card title="Privacy" icon="shield" href="/features/privacy">
+    Full details on what Resonance stores, where, and how to remove it.
+  </Card>
+  <Card title="Presence Protocols" icon="clock" href="/features/presence-protocols">
+    Use Notes to save your daily intentions so you can revisit them over time.
+  </Card>
+</CardGroup>

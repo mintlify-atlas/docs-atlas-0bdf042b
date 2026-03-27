@@ -1,0 +1,180 @@
+---
+title: Backend Setup
+description: Install, configure, and run the Resonance Express.js backend server.
+---
+
+The Resonance backend is an Express.js server that proxies requests to the Perplexity AI API and exposes the AI features as a JSON REST API. The frontend never talks to Perplexity directly — all API keys stay on the server.
+
+## Prerequisites
+
+- Node.js 18 or later
+- A Perplexity AI API key (see step 1 below)
+- Dependencies installed (`npm install`)
+
+## Getting started
+
+<Steps>
+  <Step title="Get a Perplexity API key">
+    1. Go to [perplexity.ai](https://www.perplexity.ai) and sign in or create an account.
+    2. Open **Settings → API** and click **Generate** to create a new key.
+    3. Copy the key — you will not be able to see it again.
+  </Step>
+
+  <Step title="Configure the .env file">
+    Create a `.env` file in the project root (if one does not exist) and add your key:
+
+    <CodeGroup>
+
+    ```env .env
+    PERPLEXITY_API_KEY=pplx-your_key_here
+
+    # Optional — backend port (default: 3001)
+    PORT=3001
+    ```
+
+    </CodeGroup>
+
+    If you want to override the frontend API URL, also create a `.env.vite` file:
+
+    <CodeGroup>
+
+    ```env .env.vite
+    VITE_API_URL=http://localhost:3001/api
+    ```
+
+    </CodeGroup>
+  </Step>
+
+  <Step title="Start the backend server">
+    ```bash
+    npm run server
+    ```
+
+    The server must be running before you start the frontend. If you want to run both at the same time, use:
+
+    ```bash
+    npm run dev:all
+    ```
+  </Step>
+
+  <Step title="Verify the server is running">
+    You should see the following banner in your terminal:
+
+    ```
+    ✨
+    🌟 Resonance Backend Server
+    📡 Running on http://localhost:3001
+    🤖 AI Status: Ready (Perplexity)
+    🧘 Press Ctrl+C to stop
+    ✨
+    ```
+
+    If the `PERPLEXITY_API_KEY` is missing, the AI Status line reads `Not configured` instead of `Ready (Perplexity)`.
+
+    You can also verify the server with a quick health check:
+
+    ```bash
+    curl http://localhost:3001/api/health
+    ```
+
+    ```json
+    {
+      "status": "ok",
+      "message": "Resonance backend is running",
+      "aiAvailable": true,
+      "timestamp": "2026-03-27T00:00:00.000Z"
+    }
+    ```
+  </Step>
+</Steps>
+
+## Available endpoints
+
+The full request/response schema for each endpoint is covered in the API Reference section. The table below is an at-a-glance overview.
+
+| Method | Path | Description |
+|---|---|---|
+| `GET` | `/api/health` | Health check — returns server and AI status |
+| `POST` | `/api/generate` | Generic AI generation with a custom prompt |
+| `POST` | `/api/consciousness/map` | Analyse a journal entry and map its emotional landscape |
+| `POST` | `/api/synchronicity` | Generate serendipitous resources for an area of interest |
+| `POST` | `/api/wisdom` | Retrieve ancient wisdom relevant to a situation |
+| `POST` | `/api/shadow` | Shadow integration guidance from a user prompt |
+| `POST` | `/api/feed` | Generate a consciousness-themed news feed |
+| `POST` | `/api/intention` | Generate a daily intention with morning, midday, and evening prompts |
+
+## Rate limiting
+
+The server enforces a simple in-memory rate limit on all `/api` routes:
+
+- **30 requests per minute** per IP address
+- Requests that exceed the limit receive a `429 Too Many Requests` response:
+
+```json
+{
+  "error": "Rate limit exceeded. Please slow down and take a breath. 🌬️"
+}
+```
+
+The window resets one minute after the first request in that window.
+
+## AI model
+
+The backend uses Perplexity's `sonar` model via an OpenAI-compatible SDK. The model name is set in `server.js`:
+
+```js server.js
+const MODEL_NAME = 'sonar';
+```
+
+All requests instruct the model to respond with valid JSON only. The server strips any stray markdown code fences from the response before forwarding it to the frontend.
+
+## CORS
+
+CORS is enabled globally for all routes. In development, the frontend at `http://localhost:5173` (Vite's default) can call the backend at `http://localhost:3001/api` without any additional configuration.
+
+## Troubleshooting
+
+<AccordionGroup>
+
+<Accordion title='"AI service not configured" error'>
+
+This response means `PERPLEXITY_API_KEY` is not set or the server was started without reading the `.env` file.
+
+1. Confirm `.env` exists in the project root and contains `PERPLEXITY_API_KEY=...`.
+2. Stop the server (`Ctrl+C`) and start it again with `npm run server`. The server only reads `.env` on startup.
+3. Check the startup banner — it should say `🤖 AI Status: Ready (Perplexity)`. If it says `Not configured`, the key was not loaded.
+
+</Accordion>
+
+<Accordion title="CORS errors in the browser">
+
+CORS is enabled on the backend, so this usually means the frontend is calling a different URL than where the server is listening.
+
+1. Confirm the server is running on `http://localhost:3001`.
+2. Check that `VITE_API_URL` in your `.env.vite` matches the server address. If you changed `PORT`, update `VITE_API_URL` accordingly.
+3. Restart both the backend and the Vite dev server after changing environment files.
+
+</Accordion>
+
+<Accordion title="Port already in use">
+
+If you see `EADDRINUSE: address already in use :::3001`, another process is bound to port 3001.
+
+1. Find and stop the process, or choose a different port.
+2. Set `PORT=3002` (or any free port) in your `.env`.
+3. Update `VITE_API_URL=http://localhost:3002/api` in your `.env.vite` file.
+4. Restart the server.
+
+</Accordion>
+
+<Accordion title='"Invalid API key" (401 response)'>
+
+The backend received a `401` from the Perplexity API, meaning the key is present but invalid.
+
+1. Double-check the key in `.env` — make sure there are no extra spaces or line breaks.
+2. Verify the key is active in your Perplexity account under **Settings → API**.
+3. If you recently regenerated the key, update `.env` and restart the server.
+
+</Accordion>
+
+</AccordionGroup>

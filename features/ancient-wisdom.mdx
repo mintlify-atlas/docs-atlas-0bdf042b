@@ -1,0 +1,55 @@
+---
+title: Ancient Wisdom
+description: Describe your current situation and receive a teaching, a practice, a reframe, and the tradition it comes from — drawn from Buddhist, Stoic, Indigenous, Taoist, Sufi, and other lineages.
+---
+
+Ancient Wisdom bridges diverse wisdom traditions to whatever you're currently navigating. You describe a situation — a relationship challenge, a career uncertainty, an inner conflict — and the feature selects a relevant tradition and surfaces a specific teaching, a practice you can do today, and a reframe of how to see the situation.
+
+<Note>
+  The design principle here is to make ancient wisdom accessible without diluting it. Responses include the name of the tradition being drawn from and brief context for why it speaks to your situation.
+</Note>
+
+## How to use it
+
+<Steps>
+  <Step title="Navigate to the Wisdom tab">
+    Click the book icon labeled **Wisdom** in the top navigation bar.
+  </Step>
+  <Step title="Describe your situation">
+    Write a description of what you're navigating in the textarea. The placeholder asks: *"What situation seeks wisdom? A relationship challenge? Career uncertainty? Inner conflict?"* More context produces more targeted teachings.
+  </Step>
+  <Step title="Click Seek Wisdom">
+    Press the **Seek Wisdom** button. The label changes to *"Consulting the ages..."* while the request is in flight.
+  </Step>
+  <Step title="Read and apply">
+    Four sections appear: the teaching, a practice for today, a reframe, and the tradition being honored. The practice section is the most actionable — it includes specific instructions.
+  </Step>
+</Steps>
+
+## Response fields
+
+The API endpoint `POST /api/wisdom` accepts `{ situation }` and returns the following fields:
+
+<ResponseField name="teaching" type="string" required>
+  The principle or teaching from the selected tradition that speaks most directly to your situation. Rendered as the headline section of the response under the heading *"The Teaching."*
+</ResponseField>
+
+<ResponseField name="practice" type="string" required>
+  A specific practice with instructions you can follow today. This may be a meditation, breathwork exercise, movement practice, or ritual drawn from the chosen tradition. Labeled *"Practice for Today"* in the UI.
+</ResponseField>
+
+<ResponseField name="reframe" type="string" required>
+  A new way of seeing your situation, rooted in the tradition's perspective. The UI renders this in italics under the heading *"The Reframe."*
+</ResponseField>
+
+<ResponseField name="tradition" type="string" required>
+  The name of the tradition being honored along with brief context — why this lineage and why now. Displayed under the heading *"Lineage Honored."*
+</ResponseField>
+
+## Traditions
+
+The server prompt explicitly instructs the model to draw from: **Buddhist, Stoic, Indigenous, Taoist, Sufi**, and others. The selection is made per request based on which tradition the model determines speaks most directly to the situation you've described. You will receive one tradition per response.
+
+<Tip>
+  If you want to explore how a specific tradition approaches your situation, name it in your input. For example: *"From a Stoic perspective, how should I think about a job I can't control losing?"*
+</Tip>

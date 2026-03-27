@@ -1,97 +1,69 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "Welcome to Resonance"
+description: "An AI-powered consciousness elevation platform. Use journaling, synchronicity generation, ancient wisdom, and shadow integration to deepen self-awareness and live more intentionally."
 ---
 
-## Setting up
+Resonance uses AI not to replace your thinking — but to reflect it back to you. Write a journal entry and see your emotional frequency mapped. Ask for synchronicities and receive meaningful resources, practices, and questions. Explore ancient wisdom adapted to your situation today.
 
-Get your documentation site up and running in minutes.
+This documentation covers everything you need to get the app running, understand its features, and integrate with the backend API.
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
-
-## Make it yours
-
-Design a docs site that looks great and empowers your users.
-
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get Resonance running locally in under five minutes
   </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
+  <Card title="Backend Setup" icon="server" href="/setup/backend">
+    Configure the Express backend and connect your AI API key
   </Card>
-    <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
+  <Card title="Core Features" icon="brain" href="/features/consciousness-mapping">
+    Explore Consciousness Mapping, Synchronicity, Wisdom, and more
   </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
+  <Card title="API Reference" icon="code" href="/api/overview">
+    Full reference for all backend endpoints and request/response shapes
   </Card>
-</Columns>
+</CardGroup>
 
-## Create beautiful pages
+## What Resonance does
 
-Everything you need to create world-class documentation.
+Resonance is a full-stack web application built with React, TypeScript, and an Express.js backend. Every feature is powered by AI (Perplexity's sonar model) through a rate-limited proxy server that keeps your API key secure.
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
+<CardGroup cols={3}>
+  <Card title="Consciousness Mapping" icon="wave-sine" href="/features/consciousness-mapping">
+    AI analyzes journal entries to surface your emotional frequency, growth edges, and flow triggers
   </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
+  <Card title="Synchronicity Engine" icon="bolt" href="/features/synchronicity-engine">
+    Generate perfectly-timed resources, practices, and questions based on what you're exploring
   </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
+  <Card title="Ancient Wisdom" icon="book-open" href="/features/ancient-wisdom">
+    Bridge Buddhist, Stoic, Taoist, and other traditions to your modern situation
   </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
+  <Card title="Shadow Integration" icon="moon" href="/features/shadow-integration">
+    Compassionate, trauma-informed exploration of blind spots and unconscious patterns
   </Card>
-</Columns>
+  <Card title="Collective Coherence" icon="globe" href="/features/collective-coherence">
+    Track global consciousness participation and log your own practices
+  </Card>
+  <Card title="Presence Protocols" icon="heart" href="/features/presence-protocols">
+    Digital Sabbath reminders that encourage you to close the app and go live
+  </Card>
+</CardGroup>
 
-## Need inspiration?
+## Get up and running
 
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<Steps>
+  <Step title="Clone and install dependencies">
+    Clone the repository and run `npm install` to install all frontend and backend dependencies.
+  </Step>
+  <Step title="Add your API key">
+    Create a `.env` file in the project root and add your `PERPLEXITY_API_KEY`. See [Environment Setup](/setup/environment) for all required variables.
+  </Step>
+  <Step title="Start the backend server">
+    Run `npm run server` to start the Express backend on port 3001. The AI endpoints will be available immediately.
+  </Step>
+  <Step title="Start the frontend">
+    In a separate terminal, run `npm run dev`. The app opens at `http://localhost:5173` with all features live.
+  </Step>
+</Steps>
+
+<Note>
+  You can run both the frontend and backend simultaneously with `npm run dev:all`.
+</Note>

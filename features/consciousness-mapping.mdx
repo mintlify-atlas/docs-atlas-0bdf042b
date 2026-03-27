@@ -1,0 +1,63 @@
+---
+title: Consciousness Mapping
+description: Write a journal entry and receive an AI-generated reflection of your emotional frequency, growth edges, flow triggers, patterns, and your next step.
+---
+
+Consciousness Mapping takes what you write in a journal entry and reflects it back to you as a structured analysis. The goal is not to diagnose or prescribe—it is to help you see patterns in yourself that you may already sense but haven't fully articulated.
+
+<Note>
+  Journal entries are stored in memory for your current session only. Nothing you write is persisted to a database or sent anywhere beyond the AI inference call.
+</Note>
+
+## How to use it
+
+<Steps>
+  <Step title="Navigate to the Consciousness tab">
+    Click the brain icon labeled **Consciousness** in the top navigation bar.
+  </Step>
+  <Step title="Write your journal entry">
+    Type freely in the textarea. The placeholder reads: *"What's alive in you right now? No filter needed. No performance required. Just truth..."* — that is an accurate description of what works best here. Longer, more honest entries produce more specific analyses.
+  </Step>
+  <Step title="Click Map My Frequency">
+    Press the **Map My Frequency** button. The button shows a spinner and the label changes to *"Mapping your frequency..."* while the request is in flight. A short completion sound plays when the analysis arrives.
+  </Step>
+  <Step title="Read your analysis">
+    The results appear below the input in five sections. Each section is described in detail below.
+  </Step>
+</Steps>
+
+## Response fields
+
+The API endpoint `POST /api/consciousness/map` accepts `{ journalText }` and returns the following fields:
+
+<ResponseField name="frequency" type="string" required>
+  A brief description of your current emotional and energetic state — what the AI characterizes as the dominant "vibration" in your writing. This is the headline of your analysis.
+</ResponseField>
+
+<ResponseField name="growthEdges" type="string[]" required>
+  An array of areas where you appear ready to expand. The UI labels these *"Not broken. Ready."* — they are framed as opportunities, not deficits.
+</ResponseField>
+
+<ResponseField name="flowTriggers" type="string[]" required>
+  An array of conditions, activities, or contexts that your writing suggests bring you into presence and energized focus. The UI prompt for this section is: *"What brings you into presence? More of this."*
+</ResponseField>
+
+<ResponseField name="patterns" type="string" required>
+  A single gentle observation about a recurring pattern in your writing or described experience. Delivered as prose, not a list.
+</ResponseField>
+
+<ResponseField name="nextStep" type="string" required>
+  One concrete, actionable insight drawn from everything above. Intended to be a single thing you can do or consider today.
+</ResponseField>
+
+## A note on what the AI is actually doing
+
+The system prompt instructs the model to act as *"a wise mirror, not a therapist"* and to be *"poetic, profound, and personal."* What it is doing under the hood is pattern matching against your text — identifying emotional tone, recurring words, and themes — and formatting those observations into the five fields above.
+
+<Note>
+  Resonance is transparent about this: the intelligence is in the pattern-matching, not in any literal reading of your consciousness. The app's stated purpose is to help you trust yourself more, not to trust the AI more.
+</Note>
+
+## Session storage
+
+Each completed analysis is appended to `userData.journalEntries` as `{ text, date, analysis }` and your most recent `frequency` value is stored in `userData.frequency`. Both live in React component state. Refreshing the page clears them.

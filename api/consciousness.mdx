@@ -1,0 +1,148 @@
+---
+title: Consciousness
+description: Check backend health and map journal entries to emotional frequencies, growth edges, flow triggers, and next steps using AI.
+---
+
+## GET /api/health
+
+Verifies that the Resonance backend is running and reports whether the AI service is available. Use this endpoint to check connectivity before making AI requests.
+
+### Response fields
+
+<ResponseField name="status" type="string" required>
+  Server status. Returns `"ok"` when the backend is healthy.
+</ResponseField>
+
+<ResponseField name="message" type="string" required>
+  Human-readable status message (e.g., `"Resonance backend is running"`).
+</ResponseField>
+
+<ResponseField name="aiAvailable" type="boolean" required>
+  `true` if `PERPLEXITY_API_KEY` is configured and the AI client is ready. `false` means AI endpoints will return `503`.
+</ResponseField>
+
+<ResponseField name="timestamp" type="string" required>
+  ISO 8601 timestamp of when the response was generated.
+</ResponseField>
+
+### Example
+
+```bash
+curl http://localhost:3001/api/health
+```
+
+```json
+{
+  "status": "ok",
+  "message": "Resonance backend is running",
+  "aiAvailable": true,
+  "timestamp": "2024-03-15T10:30:00.000Z"
+}
+```
+
+### TypeScript client
+
+```typescript
+import { checkBackendHealth } from './src/api/client';
+
+const health = await checkBackendHealth();
+
+if (!health.aiAvailable) {
+  console.warn('AI features are not available — check PERPLEXITY_API_KEY');
+}
+```
+
+---
+
+## POST /api/consciousness/map
+
+Analyzes a journal entry and returns a consciousness map — a structured reading of the author's current emotional frequency, areas ready for growth, what brings them into flow, recurring patterns, and one actionable next step.
+
+The model is prompted to respond as a wise mirror, not a therapist: poetic, profound, and personal.
+
+### Request body
+
+<ParamField body="journalText" type="string" required>
+  The raw journal entry to analyze. Must be non-empty. There is no enforced maximum length, but the server accepts bodies up to 10 MB.
+</ParamField>
+
+### Response fields
+
+<ResponseField name="frequency" type="string" required>
+  A brief description of the author's current vibrational or emotional state (e.g., `"Restless seeking, a soul on the edge of a threshold"`).
+</ResponseField>
+
+<ResponseField name="growthEdges" type="string[]" required>
+  An array of areas identified as ready for expansion or conscious development.
+</ResponseField>
+
+<ResponseField name="flowTriggers" type="string[]" required>
+  An array of activities, conditions, or states that bring the author into full presence.
+</ResponseField>
+
+<ResponseField name="patterns" type="string" required>
+  A gentle observation of a recurring unconscious pattern detected in the entry.
+</ResponseField>
+
+<ResponseField name="nextStep" type="string" required>
+  One profound and immediately actionable insight or practice.
+</ResponseField>
+
+### Error responses
+
+<Warning>
+| Status | Cause |
+|--------|-------|
+| `400` | `journalText` is missing or empty |
+| `503` | AI service not configured (missing `PERPLEXITY_API_KEY`) |
+| `500` | AI request failed or response could not be parsed |
+</Warning>
+
+### curl example
+
+```bash
+curl -X POST http://localhost:3001/api/consciousness/map \
+  -H "Content-Type: application/json" \
+  -d '{
+    "journalText": "I keep starting new projects but never finish them. Today I woke up feeling restless again, like something important is just out of reach."
+  }'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "frequency": "Restless seeking — a soul on the threshold of commitment",
+    "growthEdges": [
+      "Completing what you begin",
+      "Sitting with discomfort instead of reaching for novelty"
+    ],
+    "flowTriggers": [
+      "The early stages of a new idea",
+      "Moments of solitude before the world wakes"
+    ],
+    "patterns": "There is a pattern of abandonment — not of projects, but of yourself mid-way through vulnerability.",
+    "nextStep": "Choose one unfinished project and commit to one hour with it today — not to finish it, but to understand why you left."
+  }
+}
+```
+
+### TypeScript client
+
+```typescript
+import { mapConsciousness } from './src/api/client';
+
+const result = await mapConsciousness(
+  'I keep starting new projects but never finish them...'
+);
+
+console.log(result.frequency);      // string
+console.log(result.growthEdges);    // string[]
+console.log(result.flowTriggers);   // string[]
+console.log(result.patterns);       // string
+console.log(result.nextStep);       // string
+```
+
+<Note>
+The client function throws if the response is not `ok` or `success` is `false`. Wrap it in a `try/catch` for graceful error handling.
+</Note>

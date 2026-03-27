@@ -1,0 +1,86 @@
+---
+title: Radical Transparency
+description: A full disclosure of how Resonance works — the AI model, what data is sent, what is stored, and what Resonance will never do.
+---
+
+Resonance publishes a Radical Transparency page directly inside the app. This document mirrors that disclosure and expands on it. You have a right to know exactly how this works.
+
+> "We succeed when you trust yourself more, not the AI more."
+
+## The AI
+
+<AccordionGroup>
+  <Accordion title="Which AI model does Resonance use?">
+    Resonance uses **Perplexity AI's `sonar` model**, accessed via an OpenAI-compatible API at `https://api.perplexity.ai`. The server initializes the client using the `PERPLEXITY_API_KEY` environment variable.
+  </Accordion>
+  <Accordion title="What does Resonance send to the AI?">
+    Only the text you explicitly share in a feature input — journal entries, situation descriptions, questions, or the parameterless feed and intention requests. No personal identifiers, no device metadata, and no data from other features are included in the payload.
+  </Accordion>
+  <Accordion title="What does the AI actually do?">
+    The AI performs pattern matching on its training data to generate structured JSON responses. It is not conscious, it does not know you, and it does not retain anything between requests. Each API call is stateless.
+  </Accordion>
+  <Accordion title="Does Resonance train models on my inputs?">
+    No. Resonance does not train models on your inputs. Perplexity AI's own terms and privacy policy govern how they handle API requests on their infrastructure.
+  </Accordion>
+</AccordionGroup>
+
+## What is stored
+
+<CardGroup cols={2}>
+  <Card title="Browser session memory" icon="monitor">
+    All feature outputs (feed items, consciousness maps, synchronicities, wisdom responses, intentions) live in React state. They are gone the moment you refresh or close the tab.
+  </Card>
+  <Card title="Supabase (Notes only)" icon="database">
+    The only data persisted server-side is the content of your [Notes](/features/notes). You own it. Resonance does not analyze or sell it.
+  </Card>
+</CardGroup>
+
+## What Resonance does not do
+
+- Does not sell your data.
+- Does not train AI models on your inputs.
+- Does not share data with third parties, except Perplexity AI for the purpose of generating responses.
+- Does not use tracking cookies or analytics.
+- Does not claim the AI is conscious or sentient.
+
+## Rate limits
+
+The server enforces a limit of **30 requests per minute per IP address**. This applies to all `/api` routes. If you exceed the limit, requests return HTTP 429 until the window resets.
+
+<Info>
+  Rate limiting is applied server-side using a simple in-memory store. It resets if the server restarts and is per-process, not distributed.
+</Info>
+
+## The tech stack
+
+<AccordionGroup>
+  <Accordion title="Frontend">
+    - React 18 + TypeScript
+    - Vite (build tool)
+    - Tailwind CSS (styling)
+    - Lucide Icons
+  </Accordion>
+  <Accordion title="Backend">
+    - Node.js + Express
+    - Perplexity AI (`sonar` model via OpenAI-compatible API)
+    - Supabase (Notes storage)
+    - Vercel Functions (deployment)
+  </Accordion>
+</AccordionGroup>
+
+## The guiding principle
+
+Resonance is not trying to make you dependent on AI. It is using AI as a mirror — to help you see yourself more clearly, trust your own wisdom more deeply, and live more consciously. The AI doesn't know you. It can't feel your experience. But sometimes, seeing patterns reflected back helps you recognize what was already there.
+
+This project is open source. You can inspect every line of code in the GitHub repository.
+
+## Related pages
+
+<CardGroup cols={2}>
+  <Card title="Privacy" icon="shield" href="/features/privacy">
+    What Resonance collects, where it lives, and how to delete it.
+  </Card>
+  <Card title="Notes" icon="book-open" href="/features/notes">
+    The only feature that persists data — here's exactly how it works.
+  </Card>
+</CardGroup>

@@ -1,0 +1,166 @@
+---
+title: Intention
+description: Generate a daily intention with morning, midday, and evening practices, plus a generic endpoint for sending custom prompts to the AI.
+---
+
+## POST /api/intention
+
+Generates a personalized daily intention for consciousness elevation. The response structures a full day of inner work: a guiding theme, a brief morning practice, a midday check-in, and an evening reflection question.
+
+Each response is freshly generated — call this endpoint each morning for a unique intention.
+
+### Request body
+
+This endpoint takes no request body parameters. You may send an empty object or omit the body entirely.
+
+```json
+{}
+```
+
+### Response fields
+
+<ResponseField name="intention" type="string" required>
+  The core intention or theme for the day — a brief, elevated statement to anchor the day's awareness.
+</ResponseField>
+
+<ResponseField name="morning" type="string" required>
+  A brief morning practice (approximately 3–5 minutes) to embody the intention at the start of the day.
+</ResponseField>
+
+<ResponseField name="midday" type="string" required>
+  A check-in prompt to return to at the middle of the day — a question or brief practice to re-align with the intention.
+</ResponseField>
+
+<ResponseField name="evening" type="string" required>
+  A reflection question for the end of the day to close the loop and integrate what arose.
+</ResponseField>
+
+### Error responses
+
+<Warning>
+| Status | Cause |
+|--------|-------|
+| `503` | AI service not configured (missing `PERPLEXITY_API_KEY`) |
+| `500` | AI request failed or response could not be parsed |
+</Warning>
+
+### curl example
+
+```bash
+curl -X POST http://localhost:3001/api/intention \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "intention": "Today I move from reaction to response — pausing before I speak, choosing before I act.",
+    "morning": "Before you look at your phone, sit for three minutes. Place one hand on your chest. Breathe slowly. Ask: what quality do I want to embody today? Let the answer arise without forcing it.",
+    "midday": "Pause between tasks. Ask yourself: have I been responding or reacting today? No judgment — just noticing. Take three conscious breaths before continuing.",
+    "evening": "What was one moment today where you chose your response rather than simply reacting? What made that possible? What would you do differently tomorrow?"
+  }
+}
+```
+
+### TypeScript client
+
+```typescript
+import { generateIntention } from './src/api/client';
+
+const result = await generateIntention();
+
+console.log(result.intention);  // string
+console.log(result.morning);    // string
+console.log(result.midday);     // string
+console.log(result.evening);    // string
+```
+
+---
+
+## POST /api/generate
+
+A generic endpoint that forwards a custom prompt directly to the AI and returns the parsed JSON response. Use this when you need to call the AI with a prompt not covered by the named endpoints.
+
+All named endpoints (`/consciousness/map`, `/wisdom`, etc.) are implemented separately and do not delegate to this endpoint — but you can use `/generate` to build your own features with the same underlying model.
+
+### Request body
+
+<ParamField body="prompt" type="string" required>
+  The user-facing prompt to send to the AI. Must be non-empty.
+</ParamField>
+
+<ParamField body="systemContext" type="string">
+  Optional system-level instructions prepended to the standard JSON-only instruction. Use this to give the model a persona or constrain its output format.
+</ParamField>
+
+<ParamField body="feature" type="string">
+  Optional label for the feature making the request. Currently unused by the server but useful for client-side logging and analytics.
+</ParamField>
+
+### Response fields
+
+<ResponseField name="success" type="boolean" required>
+  Always `true` for a successful response.
+</ResponseField>
+
+<ResponseField name="data" type="object" required>
+  The AI response parsed as JSON. If the AI returns valid JSON this will be the parsed object. If parsing fails, it will be `{ rawResponse: "..." }` and a `warning` field will be present.
+</ResponseField>
+
+<ResponseField name="warning" type="string">
+  Present only when the AI's response could not be parsed as JSON. Value: `"Response was not valid JSON"`.
+</ResponseField>
+
+### Error responses
+
+<Warning>
+| Status | Cause |
+|--------|-------|
+| `400` | `prompt` is missing |
+| `401` | Invalid or rejected API key |
+| `429` | Perplexity API quota exceeded |
+| `503` | AI service not configured (missing `PERPLEXITY_API_KEY`) |
+| `500` | AI request failed or response could not be parsed |
+</Warning>
+
+### curl example
+
+```bash
+curl -X POST http://localhost:3001/api/generate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "Give me three affirmations for someone overcoming self-doubt",
+    "systemContext": "You are a compassionate life coach. Respond with a JSON array of strings."
+  }'
+```
+
+```json
+{
+  "success": true,
+  "data": [
+    "I am allowed to take up space and share my voice.",
+    "Every step I take is evidence of my capability.",
+    "Doubt is a visitor, not a resident — I choose what stays."
+  ]
+}
+```
+
+### TypeScript client
+
+```typescript
+import { generateContent } from './src/api/client';
+
+const result = await generateContent(
+  'Give me three affirmations for someone overcoming self-doubt',
+  'You are a compassionate life coach. Respond with a JSON array of strings.',
+  'affirmations'
+);
+
+console.log(result); // parsed JSON — shape depends on your prompt
+```
+
+<Note>
+Because `generateContent` returns `unknown`, you should validate or type-assert the response shape based on the JSON structure your prompt requests.
+</Note>

@@ -1,0 +1,93 @@
+---
+title: Shadow
+description: A trauma-informed, compassionate guide for exploring unconscious patterns and shadow material — with a clear boundary around when to seek professional support.
+---
+
+## POST /api/shadow
+
+Provides a gentle shadow integration response. You share something you've noticed — a reaction, a fear, a pattern — and the endpoint reflects back what might be in your blind spot, where the pattern likely came from, a safe question to explore it, a compassionate reframe, and clear guidance on when to seek professional help.
+
+The model is prompted to be trauma-informed, culturally sensitive, and deeply compassionate: creating safety while inviting growth, honest but never harsh.
+
+<Warning>
+Shadow work can surface difficult emotions. This endpoint is not a substitute for therapy or mental health support. The response always includes `seekSupport` guidance indicating when professional help is appropriate.
+</Warning>
+
+### Request body
+
+<ParamField body="shadowPrompt" type="string" required>
+  A description of the pattern, reaction, or shadow material you want to explore (e.g., `"I get irrationally angry when people ignore me, even in small ways"`). Must be non-empty.
+</ParamField>
+
+### Response fields
+
+<ResponseField name="reflection" type="string" required>
+  A gentle observation of what might be living in your shadow or blind spot — named without judgment.
+</ResponseField>
+
+<ResponseField name="origin" type="string" required>
+  An exploration of why this pattern might have formed and what protective function it originally served. Framed with compassion rather than blame.
+</ResponseField>
+
+<ResponseField name="explorationQuestion" type="string" required>
+  A safe, open-ended question to sit with — something that invites curiosity rather than forcing a conclusion.
+</ResponseField>
+
+<ResponseField name="reframe" type="string" required>
+  A compassionate reframe that does not dismiss the shadow but offers a new relationship to it.
+</ResponseField>
+
+<ResponseField name="seekSupport" type="string" required>
+  Clear guidance on specific situations or signs that indicate it would be beneficial to work with a licensed therapist or mental health professional rather than continuing alone.
+</ResponseField>
+
+### Error responses
+
+<Warning>
+| Status | Cause |
+|--------|-------|
+| `400` | `shadowPrompt` is missing or empty |
+| `503` | AI service not configured (missing `PERPLEXITY_API_KEY`) |
+| `500` | AI request failed or response could not be parsed |
+</Warning>
+
+### curl example
+
+```bash
+curl -X POST http://localhost:3001/api/shadow \
+  -H "Content-Type: application/json" \
+  -d '{"shadowPrompt": "I get irrationally angry when people ignore me, even in small ways"}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "reflection": "What looks like anger at being ignored may be a deep, unmet need for visibility — the wound of feeling unseen, possibly long before the people in your current life were part of your story.",
+    "origin": "This pattern often forms in early environments where attention was inconsistent or conditional. The child learns that being ignored is dangerous — a sign of abandonment — and anger becomes the armor that keeps the wound from being touched again.",
+    "explorationQuestion": "When was the very first time you remember feeling invisible? What did you decide about yourself in that moment?",
+    "reframe": "Your anger is not irrational — it is loyal. It is still protecting a younger version of you who needed protecting. The invitation now is to let it know: you are safe, and you are seen.",
+    "seekSupport": "Consider working with a therapist if this pattern is significantly affecting your relationships, if the anger feels uncontrollable, or if exploring it surfaces memories or feelings that feel too large to hold alone. Trauma-informed or attachment-focused therapists specialize in exactly this kind of work."
+  }
+}
+```
+
+### TypeScript client
+
+```typescript
+import { exploreShadow } from './src/api/client';
+
+const result = await exploreShadow(
+  'I get irrationally angry when people ignore me, even in small ways'
+);
+
+console.log(result.reflection);          // string
+console.log(result.origin);              // string
+console.log(result.explorationQuestion); // string
+console.log(result.reframe);             // string
+console.log(result.seekSupport);         // string
+```
+
+<Note>
+The client function throws if the response is not `ok` or `success` is `false`. Wrap it in a `try/catch` for graceful error handling.
+</Note>

@@ -1,0 +1,83 @@
+---
+title: Privacy
+description: What data Resonance collects, where it is stored, how third parties are involved, and how to delete your data.
+---
+
+Resonance is built with a minimal data footprint by design. This page explains exactly what is collected, what is not, and what you can do about it.
+
+## What Resonance collects
+
+Resonance only processes data you explicitly provide in a feature input:
+
+- Text you type into journal or reflection fields (Consciousness Mapping, Shadow Integration, Ancient Wisdom)
+- Situation descriptions you enter (Synchronicity Engine, Ancient Wisdom)
+- Notes you write in the [Notes](/features/notes) feature
+
+Resonance does not collect your name, email address, location, device identifiers, or any behavioral analytics.
+
+## Where data is stored
+
+<CardGroup cols={2}>
+  <Card title="Browser session memory" icon="monitor">
+    All AI-generated outputs and feature state live in React component memory. This data exists only for the current browser session and is automatically cleared when you refresh the page or close the tab.
+  </Card>
+  <Card title="Supabase (Notes feature)" icon="database">
+    Notes you save are stored server-side in a Supabase database. This is the only data that persists beyond your browser session.
+  </Card>
+</CardGroup>
+
+<Warning>
+  If you use the Notes feature, your note content is the one piece of data that does not automatically disappear. You must delete notes from your Supabase dashboard or via the Supabase API to remove them from the database.
+</Warning>
+
+## Third-party data processing
+
+When you use any AI-powered feature, the text you provide is sent to **Perplexity AI** to generate a response. Perplexity AI's privacy policy applies to that processing. Resonance does not log the text sent to the API and does not store API responses server-side.
+
+No other third-party services receive your data.
+
+## What Resonance does not do
+
+<AccordionGroup>
+  <Accordion title="Tracking and analytics">
+    Resonance uses no tracking cookies, no analytics platforms (such as Google Analytics or Mixpanel), and no session recording tools. There is no user tracking of any kind.
+  </Accordion>
+  <Accordion title="Data sales">
+    Resonance does not sell, rent, or broker your data to any party.
+  </Accordion>
+  <Accordion title="Model training">
+    Resonance does not use your inputs to train or fine-tune AI models.
+  </Accordion>
+  <Accordion title="Third-party sharing">
+    Resonance does not share your data with any third party other than Perplexity AI for the explicit purpose of generating AI responses.
+  </Accordion>
+</AccordionGroup>
+
+## How to delete your data
+
+<Steps>
+  <Step title="Delete Notes">
+    Delete notes from your Supabase dashboard or via the Supabase API. The Notes view in the app is currently read-only and does not have an in-app delete button.
+  </Step>
+  <Step title="Clear session data">
+    Refresh the page or close the browser tab. All in-session feature outputs (feed items, consciousness maps, intentions, etc.) are cleared automatically — no action required.
+  </Step>
+  <Step title="Clear browser storage">
+    Resonance does not write to `localStorage` or `sessionStorage`, so clearing browser storage has no additional effect beyond what a page refresh already does.
+  </Step>
+</Steps>
+
+## Open source
+
+Resonance is open source. You can inspect every line of code — the server, the AI prompts, the Supabase queries, and the frontend components — in the GitHub repository at [github.com/neuralboy/reasonance-app](https://github.com/neuralboy/reasonance-app). If you find something that contradicts this policy, please open an issue.
+
+## Related pages
+
+<CardGroup cols={2}>
+  <Card title="Radical Transparency" icon="eye" href="/features/radical-transparency">
+    Full disclosure of the AI model, tech stack, rate limits, and guiding principles.
+  </Card>
+  <Card title="Notes" icon="book-open" href="/features/notes">
+    Details on the one feature that persists data server-side.
+  </Card>
+</CardGroup>

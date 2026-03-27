@@ -1,0 +1,60 @@
+---
+title: Synchronicity Engine
+description: Enter a topic you're exploring and receive curated resource recommendations, an embodied practice, a contemplation question, and a suggestion for who to seek out.
+---
+
+The Synchronicity Engine takes a topic, interest, or question you're currently sitting with and generates a set of five "meaningful coincidences" — resources, a practice, a question, and a person archetype — chosen to feel perfectly timed rather than generic.
+
+<Tip>
+  The feature is designed to produce the feeling that the universe is winking at you. The more specific your input, the more specific and resonant the output. Try *"navigating a career transition while feeling creatively blocked"* rather than just *"career"*.
+</Tip>
+
+## How to use it
+
+<Steps>
+  <Step title="Navigate to the Synchronicity tab">
+    Click the lightning bolt icon labeled **Synchronicity** in the top navigation bar.
+  </Step>
+  <Step title="Enter what you're exploring">
+    Type a topic, theme, or question into the text field. The placeholder gives examples: *"creativity, career transition, finding purpose..."* You can also press **Enter** to submit.
+  </Step>
+  <Step title="Click Invoke Synchronicity">
+    Press the **Invoke Synchronicity** button. The label changes to *"Listening to the universe..."* while the request is processing.
+  </Step>
+  <Step title="Explore your results">
+    Four result sections appear below the input. Review each one and take note of anything that lands — the question especially is worth writing down.
+  </Step>
+</Steps>
+
+## Response fields
+
+The API endpoint `POST /api/synchronicity` accepts `{ interest }` and returns the following fields:
+
+<ResponseField name="resources" type="object[]" required>
+  An array of two book or resource recommendations, each matched to why they are relevant to your input right now.
+
+  <Expandable title="Resource object properties">
+    <ResponseField name="resources[].title" type="string" required>
+      The name of the book, article, podcast, or other resource.
+    </ResponseField>
+    <ResponseField name="resources[].insight" type="string" required>
+      A brief explanation of why this resource is particularly well-suited to what you're exploring at this moment.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="practice" type="string" required>
+  A description of an embodied practice — physical, contemplative, or creative — for you to try in order to engage with your topic through direct experience rather than thinking alone.
+</ResponseField>
+
+<ResponseField name="question" type="string" required>
+  A single contemplation question to sit with. The UI renders this in italics under the heading *"Contemplate This."* It is not meant to be answered quickly.
+</ResponseField>
+
+<ResponseField name="connection" type="string" required>
+  A description of a type of person — an archetype, not a specific individual — who would be worth seeking out given what you're exploring. The UI labels this section *"Who to Seek."*
+</ResponseField>
+
+## What the AI is optimizing for
+
+The server prompt instructs the model to *"make it feel magical but not contrived."* The five items are generated together in a single inference call so they can be thematically coherent rather than independent suggestions. If the result feels too generic, try narrowing your input to a more specific situation.

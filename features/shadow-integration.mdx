@@ -1,0 +1,67 @@
+---
+title: Shadow Integration
+description: Share a trigger, recurring pattern, or avoided emotion for compassionate, trauma-informed exploration of what might be in your blind spot and why it formed.
+---
+
+<Warning>
+  Shadow Integration is not a replacement for professional mental health support. If you are experiencing significant distress, trauma responses, or persistent mental health challenges, please reach out to a qualified therapist or mental health provider. This feature is a reflective tool, not clinical care.
+</Warning>
+
+Shadow Integration provides a space to examine the parts of yourself you tend to avoid — recurring reactions you don't fully understand, patterns others point out that you can't see, or emotions you push down. The AI is instructed to approach this work as *"trauma-informed, culturally sensitive, deeply compassionate"* and to create safety while inviting growth.
+
+The framing throughout is that these patterns are not character flaws. They are protective strategies that formed for a reason.
+
+## How to use it
+
+<Steps>
+  <Step title="Navigate to the Shadow tab">
+    Click the moon icon labeled **Shadow** in the top navigation bar.
+  </Step>
+  <Step title="Share what's coming up">
+    Write in the textarea about a pattern, reaction, trigger, or behavior you notice in yourself. The placeholder offers: *"What pattern do you notice? A recurring reaction? Something others see that you don't? A trigger you can't explain?"* There is no minimum length, but more specificity produces more grounded responses.
+  </Step>
+  <Step title="Click Explore With Compassion">
+    Press the **Explore With Compassion** button. The label changes to *"Holding space..."* while the request is processing.
+  </Step>
+  <Step title="Read each section slowly">
+    Five sections appear. The exploration question in particular is designed to be sat with over time, not answered immediately. The seek support section is worth reading regardless of how acute your situation feels.
+  </Step>
+</Steps>
+
+## Response fields
+
+The API endpoint `POST /api/shadow` accepts `{ shadowPrompt }` and returns the following fields:
+
+<ResponseField name="reflection" type="string" required>
+  A gentle observation of what might be present in your shadow or blind spot based on what you shared. This is not a diagnosis — it is a mirror held up with care. Displayed under the heading *"Gentle Reflection."*
+</ResponseField>
+
+<ResponseField name="origin" type="string" required>
+  An exploration of why this pattern might have formed — specifically its **protective function**. The framing is that the pattern was adaptive at some point, not a defect. Displayed under the heading *"Protective Origin."*
+</ResponseField>
+
+<ResponseField name="explorationQuestion" type="string" required>
+  A safe question to sit with as you continue to explore this territory. Rendered in italics under the heading *"Question to Sit With."* Not a question to answer quickly or out loud.
+</ResponseField>
+
+<ResponseField name="reframe" type="string" required>
+  A compassionate reframe of what you shared — a different way of understanding the pattern that replaces judgment with curiosity. Displayed under the heading *"Compassionate Reframe."*
+</ResponseField>
+
+<ResponseField name="seekSupport" type="string" required>
+  Clear guidance on when to consider therapy or professional help given what you've shared. This field is always present in the response and is always displayed. The heading is *"When to Seek Support."*
+</ResponseField>
+
+## Limits of this feature
+
+The system prompt instructs the model to *"be gentle but honest"* and to *"create safety while inviting growth."* What the model cannot do:
+
+- Provide clinical assessment or diagnosis
+- Replace the relational container that therapy provides
+- Respond to crisis situations with appropriate urgency
+
+<Warning>
+  If you are in crisis or experiencing thoughts of self-harm, do not rely on this feature. Contact a crisis line or emergency services immediately.
+</Warning>
+
+The `seekSupport` field in every response includes specific guidance on when professional support is warranted based on what you shared. Read it carefully.

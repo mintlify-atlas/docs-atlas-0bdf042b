@@ -1,0 +1,100 @@
+{
+  "projectType": "saas",
+  "projectName": "Resonance",
+  "projectDescription": "An AI-powered consciousness elevation platform that uses journaling, synchronicity generation, ancient wisdom, and shadow integration to support personal growth and self-awareness.",
+  "theme": "almond",
+  "primaryColor": "#5c93f9",
+  "lightColor": "#2d1556",
+  "darkColor": "#c65ccf",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Getting Started",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": ["introduction", "quickstart"]
+          },
+          {
+            "group": "Setup",
+            "pages": ["setup/environment", "setup/backend", "setup/deployment"]
+          }
+        ]
+      },
+      {
+        "tab": "Features",
+        "groups": [
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/consciousness-mapping",
+              "features/synchronicity-engine",
+              "features/ancient-wisdom",
+              "features/shadow-integration"
+            ]
+          },
+          {
+            "group": "Community & Presence",
+            "pages": [
+              "features/collective-coherence",
+              "features/consciousness-feed",
+              "features/presence-protocols",
+              "features/notes"
+            ]
+          },
+          {
+            "group": "Transparency",
+            "pages": ["features/radical-transparency", "features/privacy"]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Backend API",
+            "pages": [
+              "api/overview",
+              "api/consciousness",
+              "api/synchronicity",
+              "api/wisdom",
+              "api/shadow",
+              "api/feed",
+              "api/intention"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Consciousness Mapping — AI analyzes journal entries to surface emotional frequency, growth edges, and flow triggers",
+    "Synchronicity Engine — Generates meaningful resource recommendations, practices, and contemplation questions",
+    "Ancient Wisdom — Bridges diverse philosophical traditions (Buddhist, Stoic, Taoist, etc.) to modern situations",
+    "Shadow Integration — Compassionate AI-guided exploration of personal blind spots and unconscious patterns",
+    "Collective Coherence — Tracks simulated global consciousness participation and logs personal practices",
+    "Consciousness Feed — AI-generated news items across science, wisdom, transformation, and environment categories",
+    "Presence Protocols — Digital Sabbath reminders encouraging users to close the app and live fully",
+    "Radical Transparency — Full disclosure of how the AI works, what data is stored, and the tech stack",
+    "Notes — Persistent journal entry storage via Supabase",
+    "Rate-limited backend — Express.js proxy with 30 req/min per IP, powered by Perplexity AI (sonar model)"
+  ],
+  "publicApiSurface": [
+    "GET /api/health — Backend health check and AI availability status",
+    "POST /api/consciousness/map — Analyze journal text and return frequency, growth edges, flow triggers, patterns, next step",
+    "POST /api/synchronicity — Generate resources, practice, question, and connection archetype for a given interest",
+    "POST /api/wisdom — Retrieve teaching, practice, reframe, and tradition context for a situation",
+    "POST /api/shadow — Shadow integration with reflection, origin, exploration question, reframe, and professional guidance",
+    "POST /api/feed — Generate 6 consciousness-related news items across 6 categories",
+    "POST /api/intention — Generate daily intention with morning practice, midday check-in, and evening reflection",
+    "POST /api/generate — Generic AI generation endpoint with custom prompt, systemContext, and feature tag",
+    "mapConsciousness(journalText) — Frontend API client function",
+    "findSynchronicities(interest) — Frontend API client function",
+    "getWisdom(situation) — Frontend API client function",
+    "exploreShadow(shadowPrompt) — Frontend API client function",
+    "loadFeed() — Frontend API client function",
+    "generateIntention() — Frontend API client function",
+    "generateContent(prompt, systemContext?, feature?) — Frontend API client function",
+    "checkBackendHealth() — Frontend API client function"
+  ]
+}

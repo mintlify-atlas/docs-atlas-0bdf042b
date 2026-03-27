@@ -1,0 +1,102 @@
+---
+title: Environment Variables
+description: Configure the environment variables required to run Resonance locally and in production.
+---
+
+Resonance uses two environment files:
+
+- **`.env`** — read by the Express backend (`server.js`) at startup for server-side secrets.
+- **`.env.vite`** — read by Vite at build time for frontend-only `VITE_`-prefixed variables.
+
+## Creating your environment files
+
+### `.env` (backend)
+
+Create a `.env` file in the project root for backend configuration:
+
+<CodeGroup>
+
+```env .env
+# Required — Perplexity AI API key
+PERPLEXITY_API_KEY=your_perplexity_api_key_here
+
+# Optional — backend port (default: 3001)
+PORT=3001
+```
+
+</CodeGroup>
+
+### `.env.vite` (frontend)
+
+Create a `.env.vite` file in the project root for frontend configuration:
+
+<CodeGroup>
+
+```env .env.vite
+# Optional — frontend API base URL (default: http://localhost:3001/api)
+VITE_API_URL=http://localhost:3001/api
+
+# Optional — Supabase credentials for the Notes feature
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+</CodeGroup>
+
+<Warning>
+Never commit your `.env` file to source control — it contains your `PERPLEXITY_API_KEY`. The project's `.gitignore` already excludes `.env`. The `.env.vite` file is less sensitive (it contains only frontend/Supabase configuration), but treat it carefully if it contains keys you wish to keep private.
+</Warning>
+
+## Variable reference
+
+### `PERPLEXITY_API_KEY`
+
+**Required.** The API key used by `server.js` to authenticate with the Perplexity AI service. The backend initialises an OpenAI-compatible client pointed at `https://api.perplexity.ai`:
+
+```js server.js
+const openai = new OpenAI({
+  apiKey: process.env.PERPLEXITY_API_KEY,
+  baseURL: 'https://api.perplexity.ai',
+});
+```
+
+If this variable is missing, the server logs a warning on startup and every AI endpoint returns `503 Service Unavailable` with the message `"AI service not configured. Please add PERPLEXITY_API_KEY to your .env file."`
+
+### `PORT`
+
+<Note>
+This variable is optional. The server defaults to port `3001` when it is not set.
+</Note>
+
+Sets the port the Express server listens on. Change it if port 3001 is already in use on your machine. If you change `PORT`, update `VITE_API_URL` to match.
+
+### `VITE_API_URL`
+
+<Note>
+This variable is optional. The frontend defaults to `http://localhost:3001/api` when it is not set.
+</Note>
+
+The base URL the React frontend uses for all backend requests. It is read at build time by Vite:
+
+```ts src/api/client.ts
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+```
+
+In production, set this to the publicly accessible URL of your deployed backend, for example `https://api.yourdomain.com/api`.
+
+### `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`
+
+<Note>
+These variables are optional and only required if you use the Notes feature. When they are absent the Supabase client falls back to placeholder values and Notes will not persist.
+</Note>
+
+Frontend-only Vite variables consumed by `src/utils/supabase/client.ts`. You find both values in your Supabase project's **Settings → API** page.
+
+## What happens when variables are missing
+
+| Variable | Missing behaviour |
+|---|---|
+| `PERPLEXITY_API_KEY` | Server warns on startup; all AI endpoints return `503` |
+| `PORT` | Server binds to `3001` |
+| `VITE_API_URL` | Frontend calls `http://localhost:3001/api` |
+| `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` | Console warning; Notes feature non-functional |

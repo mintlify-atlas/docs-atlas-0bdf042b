@@ -1,0 +1,93 @@
+---
+title: Wisdom
+description: Receive teachings, practices, and perspective reframes drawn from ancient traditions — Buddhist, Stoic, Taoist, Indigenous, Sufi, and more — applied to a specific situation you're navigating.
+---
+
+## POST /api/wisdom
+
+Bridges ancient wisdom and modern life. You describe a situation you are facing, and the endpoint returns a tradition-specific teaching, a concrete practice you can do today, a reframe that shifts your perspective, and the tradition being honored.
+
+The model is prompted to be specific and practical while preserving depth — ancient wisdom made accessible without dilution.
+
+### Request body
+
+<ParamField body="situation" type="string" required>
+  A description of the situation, challenge, or question you're currently navigating (e.g., `"I'm struggling to make a major career decision and feel paralyzed by fear"`).
+</ParamField>
+
+### Response fields
+
+<ResponseField name="teaching" type="string" required>
+  The core principle or teaching from the chosen tradition that speaks most directly to your situation.
+</ResponseField>
+
+<ResponseField name="practice" type="string" required>
+  A specific, time-bound practice you can do today — such as a meditation, breathwork exercise, movement practice, or ritual — with clear instructions.
+</ResponseField>
+
+<ResponseField name="reframe" type="string" required>
+  A new way of seeing the situation that shifts your perspective from the current frame.
+</ResponseField>
+
+<ResponseField name="tradition" type="string" required>
+  The name of the tradition being drawn from and brief context explaining why it was chosen for this situation.
+</ResponseField>
+
+### Traditions
+
+The model draws from — but is not limited to — the following lineages:
+
+- **Buddhist** — impermanence, non-attachment, the middle way
+- **Stoic** — dichotomy of control, memento mori, virtue as the only good
+- **Taoist** — wu wei (non-forcing), the nature of flow, yin and yang
+- **Indigenous** — cyclical time, relationship with land, collective wisdom
+- **Sufi** — the heart as mirror, annihilation of the ego, love as the path
+
+### Error responses
+
+<Warning>
+| Status | Cause |
+|--------|-------|
+| `400` | `situation` is missing or empty |
+| `503` | AI service not configured (missing `PERPLEXITY_API_KEY`) |
+| `500` | AI request failed or response could not be parsed |
+</Warning>
+
+### curl example
+
+```bash
+curl -X POST http://localhost:3001/api/wisdom \
+  -H "Content-Type: application/json" \
+  -d '{"situation": "I am paralyzed by fear when making a major career decision"}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "teaching": "The Stoics distinguished sharply between what is 'up to us' (our judgments, intentions, desires) and what is not (outcomes, others' opinions, external events). Fear of a decision is often fear of an outcome you cannot control.",
+    "practice": "Sit quietly for five minutes. Write down the worst realistic outcome of each path. For each outcome, write: 'If this happened, I could...' Fill in one concrete response. Notice how fear shrinks when met with a prepared mind.",
+    "reframe": "You are not paralyzed — you are at the threshold. The paralysis is the sensation of one identity releasing before the next arrives. That is not failure. That is the work.",
+    "tradition": "Stoicism (ancient Greece/Rome) — chosen because Stoic philosophy was designed specifically for navigating uncertainty and distinguishing inner freedom from external circumstance."
+  }
+}
+```
+
+### TypeScript client
+
+```typescript
+import { getWisdom } from './src/api/client';
+
+const result = await getWisdom(
+  'I am paralyzed by fear when making a major career decision'
+);
+
+console.log(result.teaching);    // string
+console.log(result.practice);    // string
+console.log(result.reframe);     // string
+console.log(result.tradition);   // string
+```
+
+<Note>
+The client function throws if the response is not `ok` or `success` is `false`. Wrap it in a `try/catch` for graceful error handling.
+</Note>

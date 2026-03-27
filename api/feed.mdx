@@ -1,0 +1,111 @@
+---
+title: Feed
+description: Generate a curated consciousness-awareness news feed with six items spanning science, movement, wisdom, transformation, environment, and technology.
+---
+
+## POST /api/feed
+
+Generates a fresh set of six consciousness-related items across six distinct categories. Each item includes a headline, a brief summary, a deeper insight about what it means for collective consciousness, and a concrete action step.
+
+The feed is generated fresh on every request — there is no caching or persistence. Call this endpoint each time you want to refresh the user's feed.
+
+### Request body
+
+This endpoint takes no request body parameters. You may send an empty object or omit the body entirely.
+
+```json
+{}
+```
+
+### Response fields
+
+<ResponseField name="data" type="object[]" required>
+  An array of exactly six feed items, one per category.
+
+  <Expandable title="feed item properties">
+    <ResponseField name="category" type="string" required>
+      The category of this item. One of: `science`, `movement`, `wisdom`, `transformation`, `environment`, `technology`.
+    </ResponseField>
+    <ResponseField name="title" type="string" required>
+      A compelling, editorial-style headline.
+    </ResponseField>
+    <ResponseField name="summary" type="string" required>
+      A 2–3 sentence overview of the item.
+    </ResponseField>
+    <ResponseField name="insight" type="string" required>
+      A reflection on the deeper meaning of this item for consciousness and collective awakening.
+    </ResponseField>
+    <ResponseField name="action" type="string" required>
+      A concrete, immediate action step the reader can take to engage with this topic.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+### Categories
+
+| Category | Focus |
+|----------|-------|
+| `science` | Consciousness research, neuroscience breakthroughs, psychedelic science |
+| `movement` | Global movements toward wellbeing, collective practices |
+| `wisdom` | Teachings from thought leaders, timeless insights |
+| `transformation` | Personal growth stories, breakthrough moments |
+| `environment` | Nature healing, ecological consciousness |
+| `technology` | Tech serving consciousness, ethical AI |
+
+### Error responses
+
+<Warning>
+| Status | Cause |
+|--------|-------|
+| `503` | AI service not configured (missing `PERPLEXITY_API_KEY`) |
+| `500` | AI request failed or response could not be parsed |
+</Warning>
+
+### curl example
+
+```bash
+curl -X POST http://localhost:3001/api/feed \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "category": "science",
+      "title": "New Study Links Default Mode Network Activity to Self-Transcendent Experience",
+      "summary": "Researchers at Johns Hopkins have mapped the neural correlates of ego dissolution in psilocybin trials. The findings suggest the default mode network's quieting is central to mystical-type experiences. This offers the first mechanistic explanation for reports of unity consciousness.",
+      "insight": "Science is beginning to validate what contemplatives have described for millennia — that the 'self' is a construction, and its softening opens the door to something larger.",
+      "action": "Spend five minutes today in open-awareness meditation: instead of focusing on breath, simply notice what is noticing. Let the observer relax."
+    },
+    {
+      "category": "movement",
+      "title": "Global Grief Circles Movement Reaches 40 Countries",
+      "summary": "A grassroots network of facilitated grief circles has expanded to 40 countries, offering free in-person and online spaces for collective mourning. Founded during the pandemic, the movement has hosted over 200,000 participants. Organizers say grief, held communally, becomes a catalyst for social change.",
+      "insight": "We are learning again that grief is not a private failure but a communal act — and that witnessing each other's losses is one of the most radical things humans can do.",
+      "action": "Reach out to one person you know who is grieving. Not to fix anything — just to say: I see you, and I am not afraid of your pain."
+    }
+  ]
+}
+```
+
+### TypeScript client
+
+```typescript
+import { loadFeed } from './src/api/client';
+
+const items = await loadFeed();
+
+items.forEach((item) => {
+  console.log(`[${item.category}] ${item.title}`);
+  console.log(item.summary);
+  console.log('Insight:', item.insight);
+  console.log('Action:', item.action);
+});
+```
+
+<Note>
+The client function throws if the response is not `ok` or `success` is `false`. Wrap it in a `try/catch` for graceful error handling.
+</Note>

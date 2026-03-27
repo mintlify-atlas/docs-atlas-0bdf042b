@@ -1,0 +1,100 @@
+---
+title: Synchronicity
+description: Generate serendipitous resource recommendations, an embodied practice, a contemplation question, and a connection archetype aligned with any interest or area of exploration.
+---
+
+## POST /api/synchronicity
+
+Acting as a "synchronicity engine", this endpoint takes something you're currently exploring and returns a set of meaningful coincidences — resources, a practice, a question, and a person archetype — curated to feel perfectly timed rather than algorithmically selected.
+
+### Request body
+
+<ParamField body="interest" type="string" required>
+  The topic, theme, or area you are currently exploring (e.g., `"Stoic philosophy"`, `"grief and loss"`, `"building a morning routine"`). Must be non-empty.
+</ParamField>
+
+### Response fields
+
+<ResponseField name="resources" type="object[]" required>
+  An array of two book or resource recommendations.
+
+  <Expandable title="resource object properties">
+    <ResponseField name="title" type="string" required>
+      The title of the recommended book or resource.
+    </ResponseField>
+    <ResponseField name="insight" type="string" required>
+      A brief explanation of why this resource is particularly relevant right now.
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="practice" type="string" required>
+  A description of an embodied practice — such as a meditation, movement, journaling exercise, or ritual — to help you integrate this learning in your body, not just your mind.
+</ResponseField>
+
+<ResponseField name="question" type="string" required>
+  A contemplation question to sit with over the coming days.
+</ResponseField>
+
+<ResponseField name="connection" type="string" required>
+  An archetype of the type of person who would be beneficial to seek out and connect with at this stage of your exploration.
+</ResponseField>
+
+### Error responses
+
+<Warning>
+| Status | Cause |
+|--------|-------|
+| `400` | `interest` is missing or empty |
+| `503` | AI service not configured (missing `PERPLEXITY_API_KEY`) |
+| `500` | AI request failed or response could not be parsed |
+</Warning>
+
+### curl example
+
+```bash
+curl -X POST http://localhost:3001/api/synchronicity \
+  -H "Content-Type: application/json" \
+  -d '{"interest": "Stoic philosophy and modern resilience"}'
+```
+
+```json
+{
+  "success": true,
+  "data": {
+    "resources": [
+      {
+        "title": "A Guide to the Good Life by William Irvine",
+        "insight": "A practical introduction to Stoic practice written for the modern mind — exactly the bridge you need right now."
+      },
+      {
+        "title": "The Obstacle Is the Way by Ryan Holiday",
+        "insight": "It reframes adversity as the very path forward, which is precisely what your current season is asking of you."
+      }
+    ],
+    "practice": "Each morning this week, write down one thing outside your control that you are worried about. Then write one action you can take within your control. Burn or delete the first list.",
+    "question": "Where in your life are you expending energy resisting what simply is?",
+    "connection": "A mentor who has navigated significant loss or failure and emerged with greater clarity — someone who can model equanimity from lived experience."
+  }
+}
+```
+
+### TypeScript client
+
+```typescript
+import { findSynchronicities } from './src/api/client';
+
+const result = await findSynchronicities('Stoic philosophy and modern resilience');
+
+result.resources.forEach(({ title, insight }) => {
+  console.log(`${title}: ${insight}`);
+});
+
+console.log(result.practice);    // string
+console.log(result.question);    // string
+console.log(result.connection);  // string
+```
+
+<Note>
+The client function throws if the response is not `ok` or `success` is `false`. Wrap it in a `try/catch` for graceful error handling.
+</Note>
